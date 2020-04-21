@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <style>
+        .col{
+            width: 50%;
+            float: left;
+        }
+
+        .time{
+            font-size: 12px;
+            font-weight: 100;
+            color: gray;
+        }
+    </style>
+
+</head>
+<body>
+    Chat App
+    <audio id="myAudio">
+    <source src="https://interactive-examples.mdn.mozilla.net/media/examples/t-rex-roar.mp3"  type="audio/mpeg">
+    </audio>
+    <div class="col">
+        <form id="chat">
+            <input type="text" id="input">
+            <button>Send</button>
+        </form>
+        <button id="call">Call</button>
+
+        <button id="shareLocation">Share Location</button>
+    </div>
+    
+    <div class="col">
+        <div id="message"></div>
+    </div>
+
+    <script id="message-body" type="text/html">
+        <span>user</span> <span class="time">{{ createdAt }}</span> <br>
+        <p style="margin:1px">{{message}}</p>
+    </script>
+
+    <script id="location-body" type="text/html">
+        <span>user</span> <span class="time">{{ createdAt }}</span>  <br>
+        <a style="margin:1px" href="{{url}}" target="_blank">See Location</a> <br>
+        
+    </script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/3.0.1/mustache.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qs/6.6.0/qs.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="js/chat.js"></script>
+</body>
+</html>
