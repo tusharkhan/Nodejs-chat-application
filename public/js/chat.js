@@ -10,9 +10,11 @@ var locationBody = document.getElementById('location-body').innerHTML;
 var {username, room} = Qs.parse( location.search, { ignoreQueryPrefix: true } );
 
 socket.on('message', (message) => {
-    console.log(message);
+    console.log('Message : ', message);
     if( message.text !== 'call'){
         let html = Mustache.render(messageBody, {
+            id: message.id,
+            username: message.username,
             message: message.text,
             createdAt: moment(message.createdAt).format('h:mm a')
         });
@@ -23,7 +25,10 @@ socket.on('message', (message) => {
 });
 
 socket.on('location', (url) => {
+    console.log(url)
     let html = Mustache.render(locationBody, {
+        id: url.id,
+        username: url.username,
         url: url.text,
         createdAt: moment(url.createdAt).format('h:mm a')
     });
@@ -78,4 +83,9 @@ function playAudio() {
     audio.play();
 }
 
-socket.emit('join', {username, room})
+socket.emit('join', {username, room}, (error) => {
+    if (error) {
+        alert(error);
+        location.href = '/'
+    };
+})

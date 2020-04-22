@@ -3,6 +3,7 @@ const http = require('http');
 const path = require('path');
 const socket = require('socket.io');
 const Profane = require('bad-words');
+const { addUser, removeUser, getUser, getUsersInRoom } = require('../public/js/users');
 const app = express();
 const server = http.createServer(app);
 const io = socket(server);
@@ -20,14 +21,17 @@ io.on('connection', (socket) => {
         if( profane.isProfane(data) ) return callback('bad word');
         if( !(data) ) return callback('No data');
 
-        io.emit('message', helper.createMessage(data));
+        let user = getUser(socket.id);
+
+        io.to(user.room).emit('message', helper.createMessage(user, data));
         callback();
     });
 
     socket.on('shareLocation', (data, callback) => {
         if( ! data ) return callback('Error !');
+        let user = getUser(socket.id);
 
-        io.emit('location', helper.createMessage(`http://maps.google.com/?q=${data.latitude},${data.longitude}`));
+        io.to(user.room).emit('location', helper.createMessage(user, `http://maps.google.com/?q=${data.latitude},${data.longitude}`));
         callback()
     })
 
@@ -35,16 +39,25 @@ io.on('connection', (socket) => {
         socket.broadcast.emit('message',helper.createMessage(data));
     })
 
-    socket.on('join', ( {username, room} ) => {
-        socket.join(room);
-        socket.broadcast.to(room).emit('message', helper.createMessage( username+ ' has joined the room'));
+    socket.on('join', ( userdatas, callback ) => {
+        let {error, user} = addUser({
+            id: socket.id,
+            ...userdatas
+        });
+
+        if (error) return callback(error);
+
+        socket.join(user.room);
+        socket.broadcast.to(user.room).emit('message', helper.createMessage(user,  userdatas.username+ ' has joined the room'));
+        callback();
     })
 
     socket.on('disconnect', () => {
-        io.emit('message', {
-            text: 'User disconnected',
-            createdAt: new Date().getTime()
-        });
+        let remove = removeUser(socket.id);
+
+        if (remove) {
+            io.to(remove.room).emit('message', helper.createMessage(removeUser, remove.username + ' is disconnected'));
+        }
     })
 });
 
