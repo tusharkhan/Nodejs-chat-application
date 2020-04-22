@@ -22,16 +22,21 @@
 <body>
     Chat App
     <audio id="myAudio">
-    <source src="https://interactive-examples.mdn.mozilla.net/media/examples/t-rex-roar.mp3"  type="audio/mpeg">
+        <source src="https://interactive-examples.mdn.mozilla.net/media/examples/t-rex-roar.mp3"  type="audio/mpeg">
     </audio>
     <div class="col">
         <form id="chat">
-            <input type="text" id="input">
+            <input type="text" id="input" required autocomplete="off">
             <button>Send</button>
         </form>
         <button id="call">Call</button>
 
         <button id="shareLocation">Share Location</button>
+
+        <br>
+
+        <div id="sidebar"></div>
+
     </div>
     
     <div class="col">
@@ -46,7 +51,17 @@
     <script id="location-body" type="text/html">
         <span>{{username}}</span> <span class="time">{{ createdAt }}</span>  <br>
         <a style="margin:1px" href="{{url}}" target="_blank">See Location</a> <br>
-        
+    </script>
+
+    <script id="roomData" type="text/html">
+        <h2 class="room-title">{{ room }}</h2>
+        <div class="user-list">
+            <ul>
+                {{#users}}
+                    <li>{{username}}</li>
+                {{/users}}
+            </ul>
+        </div>
     </script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/3.0.1/mustache.min.js"></script>

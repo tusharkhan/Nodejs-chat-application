@@ -49,6 +49,10 @@ io.on('connection', (socket) => {
 
         socket.join(user.room);
         socket.broadcast.to(user.room).emit('message', helper.createMessage(user,  userdatas.username+ ' has joined the room'));
+        io.to(user.room).emit('roomData', {
+            room: user.room,
+            users: getUsersInRoom(user.room)
+        });
         callback();
     })
 
@@ -57,6 +61,10 @@ io.on('connection', (socket) => {
 
         if (remove) {
             io.to(remove.room).emit('message', helper.createMessage(removeUser, remove.username + ' is disconnected'));
+            io.to(remove.room).emit('roomData', {
+                room: remove.room,
+                users: getUsersInRoom(remove.room)
+            })
         }
     })
 });
